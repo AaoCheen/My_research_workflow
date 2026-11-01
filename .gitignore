@@ -4,3 +4,7 @@ __pycache__/
 .DS_Store
 .env
 .env.*
+
+# 具体项目及 LLM 对话保留在本地，只上传工作区说明。
+/workspace/*
+!/workspace/README.md

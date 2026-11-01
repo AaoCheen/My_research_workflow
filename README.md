@@ -1,76 +1,81 @@
 # My_research_workflow
 
-个人科研工作流与 AI skills 集合。目前先整理 **idea 阶段**，后续按实际使用逐步扩展。
+我个人使用的科研 skills 与工作流程。这里维护可复用的方法和指令，具体研究材料与 LLM 对话放在各自工作区。
 
-## 已收录
+## 三类目录
+
+```text
+My_research_workflow/
+  skills/                    # 独立能力：SKILL.md、参考说明、模板和必要脚本
+  workflow/                  # 使用流程：阶段顺序、选哪个 skill、怎样开始与恢复
+    templates/               # 项目说明与会话记录的空白模板
+  workspace/                 # 实际工作：项目材料、写作产物、LLM 对话
+    README.md                # 工作区说明，上传 GitHub
+    <project>/               # 具体项目，默认不上传
+```
+
+- **skills** 回答“这件事怎么做”。skill 以指示为主，也可以带脚本和模板。
+- **workflow** 回答“当前做到哪、下一步调用谁、输入输出是什么”。详细规则继续放对应 skill，避免维护两份。
+- **workspace** 保存真实工作。项目中的 `sessions/` 放对话记录与恢复摘要，`brainstorming/` 放文献、idea 和评审，`writing/` 放稿件。
+
+已有项目继续使用原目录，不必把 TAFFC 的论文、代码或对话搬进来。这里的 `workspace/<project>/` 也可以用于新项目或临时工作。
+
+## Skills
 
 | 阶段 | Skill | 用途 |
 | --- | --- | --- |
-| Idea | [aeons-idea-workflow](skills/aeons-idea-workflow/SKILL.md) | 保留原始想法，围绕文献迭代版本，记录评审与人的取舍，完成最小 pilot 后决定继续、修改或停止 |
+| Idea | [aeons-idea-workflow](skills/aeons-idea-workflow/SKILL.md) | 原始想法、文献、版本评审、人的取舍、最小 pilot 与交接 |
+| 阅读准备 | [marker-pdf-to-md](skills/marker-pdf-to-md/SKILL.md) | 使用现有 Marker 环境将 PDF 转为 Markdown 和图片，检查转换产物 |
+| 论文结构 | [tech-paper-template](skills/tech-paper-template/SKILL.md) | 技术论文的问题、挑战、方法与贡献逻辑 |
+| 论文结构 | [benchmark-paper-template](skills/benchmark-paper-template/SKILL.md) | Benchmark / Evaluation 论文的构建、评测与发现结构 |
+| 起草 | [paper-writer](skills/paper-writer/SKILL.md) | 根据已有材料起草章节或全文 |
+| 起草 | [intro-drafter](skills/intro-drafter/SKILL.md) | 起草或重组 Introduction |
+| 修改 | [paper-polish](skills/paper-polish/SKILL.md) | 语法、衔接、措辞、证据强度与中译英 |
+| 修改 | [academic-humanizer](skills/academic-humanizer/SKILL.md) | 减少学术文本中的空泛、机械重复和模板化表达 |
+| 核查 | [nature-ref-verifier](skills/nature-ref-verifier/SKILL.md) | 逐条核对参考文献字段与来源 |
+| 核查 | [pre-submission-reviewer](skills/pre-submission-reviewer/SKILL.md) | 投稿前检查逻辑、语言、格式与图表问题 |
 
-AI 协助整理、检索、评审和已授权的实验，研究者决定方向与关键取舍。计划、评分与多轮 AI 共识不能替代真实实验结果。
+Marker 已在本机配置；这里只保留使用方法，不提供下载、安装教程。其他 skills 中提到的外部检索、Zotero 或协作 skills 按需使用，文件被收录不代表所有外部服务已配置。保留各 skill 原有的来源和许可字段。
 
-## 目录
+## 日常使用
 
-```text
-skills/
-  aeons-idea-workflow/
-    SKILL.md                    # 工作流入口
-    agents/openai.yaml          # Codex 显示信息
-    scripts/idea_workspace.py   # 目录初始化、状态查看和原文快照
-    assets/                    # review、pilot、handoff 模板
-    references/                # 运行约定、交接说明与设计参考
-```
+先看 [workflow/README.md](workflow/README.md)，再选当前任务需要的流程：
 
-仓库保存可复用的工作流和模板。具体项目的 idea、论文与实验结果保存在各自项目中。
+- [Idea → 最小 pilot](workflow/idea-to-pilot.md)
+- [PDF 转换与文献阅读](workflow/reading.md)
+- [论文结构、起草、修改与核查](workflow/writing.md)
 
-## 在 Codex 中使用
-
-克隆仓库后，在仓库根目录执行以下命令，把 skill 复制到个人 skills 目录。若已有同名安装，先比较内容并自行选择是否替换；命令会在目录已存在时停止。
-
-```bash
-python3 - <<'PY'
-import os
-import shutil
-from pathlib import Path
-
-codex_dir = Path(os.environ.get("CODEX_HOME", "~/.codex")).expanduser()
-source = Path("skills/aeons-idea-workflow")
-destination = codex_dir / "skills" / source.name
-destination.parent.mkdir(parents=True, exist_ok=True)
-shutil.copytree(source, destination)
-print(f"Installed: {destination}")
-PY
-```
-
-重新打开 Codex 会话后，可以这样提出任务：
+给 LLM 的任务需要明确**项目路径、目标文件和当前问题**。例如：
 
 ```text
-使用 $aeons-idea-workflow，先查看当前项目已有的 idea 和评审，再继续本轮迭代。
+工作项目：/absolute/path/to/project。
+先读 skills/aeons-idea-workflow/SKILL.md，
+再读项目已有的 idea、评审和决策记录，判断当前阶段并继续本轮工作。
+保留原始想法，区分 AI 建议与我实际作出的决定。
 ```
 
-`deep-research`、`idea-evaluator`、`marker-pdf-to-md` 等是按需使用的可选协作 skills，本仓库不包含它们。缺少这些能力时，仍可使用工作流约定和目录脚本。
+这里的相对路径以本仓库为起点；不在仓库目录对话时，给出实际绝对路径。已安装的 skill 可以直接按名字调用；仓库副本和已安装副本需要分别维护，Git 提交不会自动更新本机安装。
 
-## 独立使用目录脚本
+对话本身不会自动写入这个仓库。需要保留时，导出原始对话，或让 LLM 按 [会话模板](workflow/templates/session.md)整理摘要并标明记录类型。具体工作区见 [workspace/README.md](workspace/README.md)。
 
-需要 Python 3.9 或更新版本；脚本仅使用标准库。从本仓库根目录运行，`--project-root` 指向一个已经存在的项目目录。
+## 自己提交并上传
+
+远程仓库已经建好，`origin` 已配置。每次修改后，在终端自行执行：
 
 ```bash
-# 只读查看状态；不会创建文件。
-python3 skills/aeons-idea-workflow/scripts/idea_workspace.py \
-  status --project-root /absolute/path/to/project
+cd /home/ca/big_space/my_project/TAFFC/tmp/My_research_workflow
 
-# 在项目中创建 brainstorming/paper、idea、idea_review 等目录。
-python3 skills/aeons-idea-workflow/scripts/idea_workspace.py \
-  init --project-root /absolute/path/to/project
+# 先查看本轮改动；未跟踪的新文件会显示在 status 中。
+git status --short
+git diff --stat
+git diff
 
-# 保存原始想法快照，并记录来源与 SHA256；相同内容不重复建版。
-python3 skills/aeons-idea-workflow/scripts/idea_workspace.py \
-  snapshot --project-root /absolute/path/to/project \
-  --idea-id 001-topic --source-file /absolute/path/to/idea.md \
-  --origin human --reason '保存我的原始想法'
+# 只暂存工作流、skills 和工作区说明。
+git add README.md .gitignore skills/ workflow/ workspace/README.md
+git diff --cached --stat
+
+git commit -m "Organize research skills and workflows"
+git push origin main
 ```
 
-只有确为人的原文时使用 `--origin human`；AI 代写或混合来源应选择相应标签。运行 `snapshot --help` 查看所有选项。
-
-完整约定见 [SKILL.md](skills/aeons-idea-workflow/SKILL.md)，设计来源见 [来源说明](skills/aeons-idea-workflow/references/design-sources.md)。
+以后按实际改动调整提交说明即可。`workspace/` 下的真实项目内容被 `.gitignore` 排除；不用重新创建仓库，也不需要用 `gh` 才能推送。
