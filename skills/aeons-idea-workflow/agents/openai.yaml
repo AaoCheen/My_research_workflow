@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aeon's Idea Workflow"
+  short_description: "从人类原始想法出发，结合论文、版本评审与最小 pilot 迭代定题"
+  default_prompt: "使用 $aeons-idea-workflow 检查当前项目的 idea 进度，依据已有论文和评审继续迭代，并规划或执行已授权的最小 pilot。"
